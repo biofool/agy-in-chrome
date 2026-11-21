@@ -1,6 +1,6 @@
 export default [
   {
-    ignores: ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.venv/**", "**/vendor/**"]
+    ignores: ["**/node_modules/**", "**/dist/**", "**/build/**", "**/.venv/**", "**/vendor/**", "REAL/**"]
   },
   {
     rules: {

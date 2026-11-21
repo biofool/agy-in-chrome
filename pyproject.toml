@@ -1,9 +1,16 @@
 # --- Line-count limits (issue: keep files small for AI-agent edits) ---
+[tool.ruff]
+# REAL/ is a vendored copy of upstream agisdk/REAL: keep parity, never lint-split it (#5).
+extend-exclude = ["REAL"]
+
 [tool.ruff.lint]
 select = ["C901"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
+
+[tool.pylint.main]
+ignore-paths = ["^REAL/.*$"]
 
 [tool.pylint.format]
 max-module-lines = 250
