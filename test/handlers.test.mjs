@@ -28,7 +28,8 @@ const state = { tabs:[{id:100,windowId:7,active:true,groupId:55}], groupId:55, c
 globalThis.chrome = mkChrome(state);
 
 // deps the handlers close over
-let tabGroupId = 55; let tabGroupTabs = new Set([100]);
+// extension/bg/state.js `state` (scalars shared across the split bg modules)
+const bgState = { tabGroupId: 55, tabGroupTabs: new Set([100]) };
 const isInGroup = async (id) => state.tabs.some(t=>t.id===id);
 const ensureTabGroup = async () => {};
 const formatTabContext = (tabs) => ({content:[{type:"text",text:JSON.stringify({availableTabs:tabs.map(t=>({tabId:t.id}))})}]});
@@ -51,10 +52,10 @@ const src = [
   extractFunction("effectiveConfig"),
   extractFunction("writeConfig")
 ].join("\n\n");
-const mk = new Function("chrome","tabGroupId","tabGroupTabs","isInGroup","ensureTabGroup","formatTabContext",
+const mk = new Function("chrome","state","isInGroup","ensureTabGroup","formatTabContext",
   "CONFIG_KEY","TAB_CONFIG_KEY","CONFIG_SCHEMA","configState","configHydrated","humanSession","humanSessionSeed","human",
   src + "; return { H_tabs_create_mcp, H_set_tab_focus, H_get_config, H_set_config, effectiveConfig, writeConfig };");
-const H = mk(globalThis.chrome, tabGroupId, tabGroupTabs, isInGroup, ensureTabGroup, formatTabContext,
+const H = mk(globalThis.chrome, bgState, isInGroup, ensureTabGroup, formatTabContext,
   CONFIG_KEY, TAB_CONFIG_KEY, CONFIG_SCHEMA, configState, configHydrated, humanSession, humanSessionSeed, human);
 
 console.log("== #28: creating a tab must not select it or steal focus ==");
